@@ -39,32 +39,32 @@ export default function Dashboard({ onOpenInvoicePreview, onOpenPaymentModal, on
 
   // 2. Total Receivables (Customers who owe money - Udhaar)
   const totalReceivables = parties
-    .filter((p) => p.balance > 0)
-    .reduce((sum, p) => sum + Number(p.balance), 0);
+    .filter((p) => (Number(p.balance) || 0) > 0)
+    .reduce((sum, p) => sum + (Number(p.balance) || 0), 0);
 
   // 3. Total Payables (Suppliers we owe money to)
   const totalPayables = parties
-    .filter((p) => p.balance < 0)
-    .reduce((sum, p) => sum + Math.abs(Number(p.balance)), 0);
+    .filter((p) => (Number(p.balance) || 0) < 0)
+    .reduce((sum, p) => sum + Math.abs(Number(p.balance) || 0), 0);
 
   // 4. Total Stock Asset Value
   const totalStockValue = products.reduce(
-    (sum, p) => sum + Number(p.stock) * Number(p.purchasePrice || p.sellingPrice),
+    (sum, p) => sum + (Number(p.stock) || 0) * (Number(p.purchasePrice || p.sellingPrice || 0) || 0),
     0
   );
 
   // 5. Cash in Hand & Bank estimation
   const totalCashCollected = invoices
     .filter((i) => i.status === 'Paid')
-    .reduce((sum, i) => sum + Number(i.paidAmount || i.grandTotal), 0);
-  const totalExpensesSum = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+    .reduce((sum, i) => sum + (Number(i.paidAmount || i.grandTotal) || 0), 0);
+  const totalExpensesSum = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const estimatedLiquidBalance = Math.max(15400, totalCashCollected - totalExpensesSum + 25000);
 
   // Low stock items filter
-  const lowStockItems = products.filter((p) => p.stock <= p.minStock);
+  const lowStockItems = products.filter((p) => (Number(p.stock) || 0) <= (Number(p.minStock) || 0));
 
   // Parties with pending balance for quick reminder
-  const overdueParties = parties.filter((p) => p.balance > 0);
+  const overdueParties = parties.filter((p) => (Number(p.balance) || 0) > 0);
 
   return (
     <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>

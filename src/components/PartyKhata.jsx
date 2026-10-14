@@ -70,12 +70,12 @@ export default function PartyKhata({ selectedPartyForReminder, onCloseReminder }
 
   // Calculations
   const totalReceivables = parties
-    .filter((p) => p.balance > 0)
-    .reduce((sum, p) => sum + Number(p.balance), 0);
+    .filter((p) => (Number(p.balance) || 0) > 0)
+    .reduce((sum, p) => sum + (Number(p.balance) || 0), 0);
 
   const totalPayables = parties
-    .filter((p) => p.balance < 0)
-    .reduce((sum, p) => sum + Math.abs(Number(p.balance)), 0);
+    .filter((p) => (Number(p.balance) || 0) < 0)
+    .reduce((sum, p) => sum + Math.abs(Number(p.balance) || 0), 0);
 
   // Filter parties
   const filteredParties = parties.filter((p) => {
@@ -86,7 +86,7 @@ export default function PartyKhata({ selectedPartyForReminder, onCloseReminder }
 
     if (activeFilter === 'customer') return matchesSearch && p.type === 'customer';
     if (activeFilter === 'supplier') return matchesSearch && p.type === 'supplier';
-    if (activeFilter === 'udhaar') return matchesSearch && p.balance > 0;
+    if (activeFilter === 'udhaar') return matchesSearch && (Number(p.balance) || 0) > 0;
     return matchesSearch;
   });
 
