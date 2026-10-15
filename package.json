@@ -7,13 +7,14 @@
     "dev": "vite",
     "server": "node server/app.js",
     "build": "vite build",
-    "build:all": "npm install && npm run build && cd server && npm install",
-    "render-build": "npm install && npm run build && cd server && npm install",
+    "build:all": "npm install --include=dev && npm run build && cd server && npm install",
+    "render-build": "npm install --include=dev && npm run build && cd server && npm install",
     "start": "node server/app.js",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
     "axios": "^1.7.9",
     "canvas-confetti": "^1.9.4",
     "cors": "^2.8.5",
@@ -22,13 +23,12 @@
     "lucide-react": "^1.47.0",
     "mongoose": "^8.0.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "vite": "^8.3.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
-    "oxlint": "^1.81.0",
-    "vite": "^8.3.0"
+    "oxlint": "^1.81.0"
   }
 }

@@ -15,15 +15,19 @@ app.use(express.json({ limit: '10mb' }));
 // =============================================
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/jai_kisan_agro';
 
-mongoose.connect(MONGO_URI, {
-  serverSelectionTimeoutMS: 3000,
-  connectTimeoutMS: 3000
-})
-  .then(() => console.log('✅ Connected to MongoDB:', MONGO_URI))
-  .catch(err => {
-    console.warn('⚠️  MongoDB connection note:', err.message);
-    console.log('ℹ️  Server running in resilient mode. If MongoDB is offline, local cache is preserved.');
-  });
+if (MONGO_URI && MONGO_URI !== 'none' && MONGO_URI !== 'skip' && !MONGO_URI.startsWith('none')) {
+  mongoose.connect(MONGO_URI, {
+    serverSelectionTimeoutMS: 3000,
+    connectTimeoutMS: 3000
+  })
+    .then(() => console.log('✅ Connected to MongoDB:', MONGO_URI))
+    .catch(err => {
+      console.warn('⚠️  MongoDB connection note:', err.message);
+      console.log('ℹ️  Server running in resilient mode. If MongoDB is offline, local cache is preserved.');
+    });
+} else {
+  console.log('ℹ️  Running in Resilient / Local Storage mode (MongoDB bypassed).');
+}
 
 mongoose.connection.on('disconnected', () => console.warn('⚠️  MongoDB disconnected'));
 mongoose.connection.on('reconnected', () => console.log('🔄 MongoDB reconnected'));
