@@ -765,6 +765,21 @@ app.post('/api/ewb/logout', (req, res) => {
 
 
 // =============================================
+// Static Frontend & SPA Fallback (for Render / Production)
+// =============================================
+const fs = require('fs');
+const distPath = path.join(__dirname, '../dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  console.log(`📂 Serving static production build from: ${distPath}`);
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
+// =============================================
 // Start Server
 // =============================================
 const PORT = process.env.PORT || 5000;

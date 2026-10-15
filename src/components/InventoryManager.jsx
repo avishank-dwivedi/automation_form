@@ -256,12 +256,12 @@ export default function InventoryManager() {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((p) => {
+              {filteredProducts.map((p, idx) => {
                 const isLow = p.stock <= p.minStock;
                 const isOut = p.stock === 0;
 
                 return (
-                  <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                  <tr key={p.id || p._id || `prod-${idx}`} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '12px' }}>
                       <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{p.name}</div>
                     </td>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Plus,
@@ -31,6 +31,45 @@ export default function InvoiceBuilder({ onOpenPreview }) {
 
   const [viewMode, setViewMode] = useState('list'); // 'list' | 'create'
   
+  // Invoice form state
+  const nextInvoiceNumber = `INV-${1000 + invoices.length + 1}`;
+  const [invoiceNumber, setInvoiceNumber] = useState(nextInvoiceNumber);
+  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
+  const [dueDate, setDueDate] = useState(
+    new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0]
+  );
+  
+  const [selectedPartyId, setSelectedPartyId] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerGstin, setCustomerGstin] = useState('');
+
+  // Line items state
+  const [lineItems, setLineItems] = useState([
+    {
+      productId: '',
+      name: '',
+      hsn: '',
+      quantity: 1,
+      unit: 'Bags',
+      rate: 0,
+      discount: 0,
+      gstRate: 5,
+      taxableAmount: 0,
+      cgst: 0,
+      sgst: 0,
+      igst: 0,
+      total: 0
+    }
+  ]);
+
+  const [paymentMode, setPaymentMode] = useState('Cash');
+  const [paymentStatus, setPaymentStatus] = useState('Paid'); // 'Paid' | 'Unpaid'
+  const [notes, setNotes] = useState('Thank you for your business! Jai Kisan.');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'Paid' | 'Unpaid'
+
   // Consume Scratchpad conversion if triggered
   useEffect(() => {
     if (scratchpadToConvert) {
@@ -73,45 +112,6 @@ export default function InvoiceBuilder({ onOpenPreview }) {
       setScratchpadToConvert(null);
     }
   }, [scratchpadToConvert, products, setScratchpadToConvert]);
-  
-  // Invoice form state
-  const nextInvoiceNumber = `INV-${1000 + invoices.length + 1}`;
-  const [invoiceNumber, setInvoiceNumber] = useState(nextInvoiceNumber);
-  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
-  const [dueDate, setDueDate] = useState(
-    new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0]
-  );
-  
-  const [selectedPartyId, setSelectedPartyId] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
-  const [customerGstin, setCustomerGstin] = useState('');
-
-  // Line items state
-  const [lineItems, setLineItems] = useState([
-    {
-      productId: '',
-      name: '',
-      hsn: '',
-      quantity: 1,
-      unit: 'Bags',
-      rate: 0,
-      discount: 0,
-      gstRate: 5,
-      taxableAmount: 0,
-      cgst: 0,
-      sgst: 0,
-      igst: 0,
-      total: 0
-    }
-  ]);
-
-  const [paymentMode, setPaymentMode] = useState('Cash');
-  const [paymentStatus, setPaymentStatus] = useState('Paid'); // 'Paid' | 'Unpaid'
-  const [notes, setNotes] = useState('Thank you for your business! Jai Kisan.');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'Paid' | 'Unpaid'
 
   // When party dropdown changes
   const handlePartyChange = (partyId) => {
@@ -404,8 +404,8 @@ export default function InvoiceBuilder({ onOpenPreview }) {
                 onChange={(e) => handlePartyChange(e.target.value)}
               >
                 <option value="">-- Cash / Walk-in Customer --</option>
-                {parties.filter((p) => p.type === 'customer').map((p) => (
-                  <option key={p.id} value={p.id}>
+                {parties.filter((p) => p.type === 'customer').map((p, idx) => (
+                  <option key={p.id || p._id || `cust-${idx}`} value={p.id}>
                     {p.name} ({p.city}) {p.balance > 0 ? `[Pending: ₹${p.balance}]` : ''}
                   </option>
                 ))}
@@ -829,8 +829,8 @@ export default function InvoiceBuilder({ onOpenPreview }) {
                 </tr>
               </thead>
               <tbody>
-                {filteredInvoices.map((inv) => (
-                  <tr key={inv.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                {filteredInvoices.map((inv, idx) => (
+                  <tr key={inv.id || inv._id || `inv-${idx}`} style={{ borderBottom: '1px solid var(--border-color)' }}>
                     <td style={{ padding: '12px', fontWeight: 700 }} className="font-mono">
                       {inv.invoiceNumber}
                     </td>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import { API_BASE } from '../config/api';
 import {
   Save,
   Download,
@@ -71,7 +72,7 @@ export default function Settings() {
 
   // Load server & NIC session status
   const loadServerStatus = () => {
-    fetch('http://localhost:5000/api/health')
+    fetch(`${API_BASE}/api/health`)
       .then(res => res.json())
       .then(data => {
         setServerHealth(data);
@@ -81,13 +82,13 @@ export default function Settings() {
         setServerHealth({
           status: 'offline',
           mongoStatus: 'disconnected',
-          mongoUri: 'http://localhost:5000 (not running)',
+          mongoUri: 'Server offline',
           ewbMode: 'sandbox',
           nicSessionActive: false
         });
       });
 
-    fetch('http://localhost:5000/api/ewb/session-status')
+    fetch(`${API_BASE}/api/ewb/session-status`)
       .then(res => res.json())
       .then(data => setNicSession(data))
       .catch(() => {});
@@ -105,7 +106,7 @@ export default function Settings() {
 
     try {
       // 1. Save config to server
-      await fetch('http://localhost:5000/api/ewb/config', {
+      await fetch(`${API_BASE}/api/ewb/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -117,7 +118,7 @@ export default function Settings() {
       });
 
       // 2. Authenticate
-      const res = await fetch('http://localhost:5000/api/ewb/authenticate', {
+      const res = await fetch(`${API_BASE}/api/ewb/authenticate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -818,7 +819,7 @@ export default function Settings() {
           <div>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem', fontWeight: 600 }}>API SERVER</div>
             <div style={{ fontWeight: 700, marginTop: '2px' }}>
-              {serverHealth.status === 'ok' ? '🟢 Running on http://localhost:5000' : '🔴 Server Offline'}
+              {serverHealth.status === 'ok' ? `🟢 Running (${API_BASE || 'Cloud / Same Host'})` : '🔴 Server Offline'}
             </div>
           </div>
           <div>

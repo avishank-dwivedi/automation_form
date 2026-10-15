@@ -365,9 +365,9 @@ export default function Dashboard({ onOpenInvoicePreview, onOpenPaymentModal, on
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {invoices.slice(0, 5).map((inv) => (
+            {invoices.slice(0, 5).map((inv, idx) => (
               <div
-                key={inv.id}
+                key={inv.id || inv._id || `inv-${idx}`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -454,9 +454,9 @@ export default function Dashboard({ onOpenInvoicePreview, onOpenPaymentModal, on
                 </p>
               </div>
             ) : (
-              overdueParties.map((party) => (
+              overdueParties.map((party, idx) => (
                 <div
-                  key={party.id}
+                  key={party.id || party._id || `party-${idx}`}
                   style={{
                     display: 'flex',
                     alignItems: 'center',

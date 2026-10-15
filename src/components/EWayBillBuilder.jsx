@@ -21,6 +21,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { API_BASE } from '../config/api';
 
 const TRANSPORT_MODES = ['Road', 'Rail', 'Air', 'Ship'];
 
@@ -43,7 +44,7 @@ export default function EWayBillBuilder({ onClose, initialInvoice = null }) {
 
   // Check NIC session status on mount
   useEffect(() => {
-    fetch('http://localhost:5000/api/ewb/session-status')
+    fetch(`${API_BASE}/api/ewb/session-status`)
       .then(r => r.json())
       .then(data => setNicSession(data))
       .catch(() => {}); // server may not be running
@@ -474,7 +475,7 @@ export default function EWayBillBuilder({ onClose, initialInvoice = null }) {
     setNicAuthLoading(true);
     setNicAuthError('');
     try {
-      const res = await fetch('http://localhost:5000/api/ewb/authenticate', {
+      const res = await fetch(`${API_BASE}/api/ewb/authenticate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nicAuthForm)
@@ -503,7 +504,7 @@ export default function EWayBillBuilder({ onClose, initialInvoice = null }) {
     setPortalResult(null);
     const buyerParty = parties.find(p => p.id === formData.buyerPartyId);
     try {
-      const res = await fetch('http://localhost:5000/api/ewb/generate', {
+      const res = await fetch(`${API_BASE}/api/ewb/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -529,7 +530,7 @@ export default function EWayBillBuilder({ onClose, initialInvoice = null }) {
 
   // 7. Logout NIC session
   const handleNicLogout = async () => {
-    await fetch('http://localhost:5000/api/ewb/logout', { method: 'POST' }).catch(() => {});
+    await fetch(`${API_BASE}/api/ewb/logout`, { method: 'POST' }).catch(() => {});
     setNicSession({ active: false, isMock: false, gstin: null, tokenExpiry: null, mode: 'sandbox' });
     setPortalResult(null);
   };
@@ -1142,7 +1143,7 @@ export default function EWayBillBuilder({ onClose, initialInvoice = null }) {
               background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px',
               padding: '10px 14px', marginBottom: '18px', fontSize: '11.5px', color: '#065f46'
             }}>
-              <strong>🔐 Secure Connection:</strong> Your credentials are sent only to your local backend server (localhost:5000) and never stored in the browser. The server acts as a secure proxy to NIC.
+              <strong>🔐 Secure Connection:</strong> Your credentials are sent securely to the backend API server and never stored in the browser. The server acts as a secure proxy to NIC.
             </div>
 
             <form onSubmit={handleNicAuthenticate} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>

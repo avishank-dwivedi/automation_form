@@ -10,6 +10,7 @@ import {
   initialQuotations,
   initialScratchpads
 } from '../data/seedData';
+import { API_BASE } from '../config/api';
 
 const AppContext = createContext();
 
@@ -152,7 +153,7 @@ export const AppProvider = ({ children }) => {
 
   // Load initial data from backend MongoDB
   useEffect(() => {
-    fetch('http://localhost:5000/api/data')
+    fetch(`${API_BASE}/api/data`)
       .then(res => res.json())
       .then(data => {
         if (data.businessProfile && Object.keys(data.businessProfile).length) setBusinessProfile(data.businessProfile);
@@ -256,7 +257,7 @@ const broadcastState = async (overrides = {}) => {
 
   // Persist to backend MongoDB
   try {
-    await fetch('http://localhost:5000/api/sync', {
+    await fetch(`${API_BASE}/api/sync`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fullPayload)

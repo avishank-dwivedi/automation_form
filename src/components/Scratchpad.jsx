@@ -352,11 +352,11 @@ export default function Scratchpad({ isModal = false, onClose = null }) {
         <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
           {isHindi ? 'रेडीमेड टेम्पलेट्स:' : 'Pre-made Presets:'}
         </span>
-        {scratchpads.map((sp) => {
+        {scratchpads.map((sp, idx) => {
           const isSelected = selectedPresetId === sp.id;
           return (
             <button
-              key={sp.id}
+              key={sp.id || `sp-${idx}`}
               onClick={() => handleSelectScratchpad(sp)}
               style={{
                 display: 'inline-flex',
